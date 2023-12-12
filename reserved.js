@@ -6,10 +6,11 @@ const validateTournament = require("./validate-tournament");
 const validateTournamentUpdate = require("./validate-tournament-update");
 const validateParticipant = require("./validate-participant");
 const validateResult = require("./validate-result");
+const validateComment = require("./validate-comment");
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
-  console.log("Tournaments time: ", Date.now());
+  console.log("Reserved time: ", Date.now());
   next();
 });
 router.use(function verifyToken(req, res, next) {
@@ -24,6 +25,7 @@ router.use(function verifyToken(req, res, next) {
 });
 // define the post tournament
 router.post("/tournament", async function (req, res) {
+  console.log("post tournament");
   const { body } = req;
   const error = validateTournament(body);
   if (!error) {
@@ -43,6 +45,7 @@ router.post("/tournament", async function (req, res) {
 });
 // define the post participant
 router.post("/participant", async function (req, res) {
+  console.log("post participant");
   const { body } = req;
   const error = validateParticipant(body);
   if (!error) {
@@ -66,10 +69,19 @@ router.post("/participant", async function (req, res) {
 });
 // define the post result
 router.post("/result", async function (req, res) {
+  console.log("post result");
   const { body } = req;
   const error = validateResult(body);
   if (!error) {
-    const { tournamentId, roundNumber, boardNumber, roundEnded, player1, player2, result } = body;
+    const {
+      tournamentId,
+      roundNumber,
+      boardNumber,
+      roundEnded,
+      player1,
+      player2,
+      result,
+    } = body;
     try {
       const insert = await db.query(
         `insert into results (tournamentId, roundNumber, boardNumber, roundEnded, player1, player2, result) values (${tournamentId}, ${roundNumber}, ${boardNumber}, ${roundEnded}, ${player1}, ${player2}, "${result}");`
@@ -83,15 +95,66 @@ router.post("/result", async function (req, res) {
     res.status(400).send(error);
   }
 });
+// define the post comment
+router.post("/comment", async function (req, res) {
+  console.log("post comment");
+  const { body } = req;
+  const error = validateComment(body);
+  if (!error) {
+    const { tournamentId, userId, text, likes, dislikes } = body;
+    try {
+      const insert = await db.query(
+        `insert into comments (tournamentId, userId, text, likes, dislikes, publicationDate) values (${tournamentId}, ${userId}, "${text}", ${likes}, ${dislikes}, CURRENT_TIMESTAMP);`
+      );
+      res.status(200).json({ insert });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error.sqlMessage);
+    }
+  } else {
+    res.status(400).send(error);
+  }
+});
+// define the put comment
+router.put("/comment", async function (req, res) {
+  console.log("put comment");
+  const { body } = req;
+  const { commentId, likes, dislikes } = body;
+  try {
+    const update = await db.query(
+      `update comments set likes = (${likes}), dislikes = (${dislikes}) where commentId = (${commentId});`
+    );
+    res.status(200).json({ update });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
+// define the delete comment
+router.delete("/comment/:id", async function (req, res) {
+  const id = req.params.id;
+  console.log("delete comment " + id);
+  try {
+    const deleted = await db.query(
+      `delete from comments where commentId = (${id});`
+    );
+    const affected = deleted.affectedRows;
+    res.status(200).json({ affected });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
 // define the put result
 router.put("/result", async function (req, res) {
+  console.log("put result");
   const { body } = req;
   const error = validateResult(body);
   if (!error) {
-    const { tournamentId, roundNumber, roundEnd, result } = body;
+    const { tournamentId, roundNumber, boardNumber, result } = body;
     try {
       const update = await db.query(
-        `update results set result = "${result}" where tournamentId = ${tournamentId} and roundNumber = ${roundNumber} and roundEnd = ${roundEnd};`
+        `update results set result = ("${result}") where tournamentId = (${tournamentId}) and roundNumber = (${roundNumber}) and boardNumber = (${boardNumber});`
       );
       res.status(200).json({ update });
     } catch (error) {
@@ -102,14 +165,39 @@ router.put("/result", async function (req, res) {
     res.status(400).send(error);
   }
 });
+// define the patch setRoundEnded
+router.patch("/setRoundEnded", async function (req, res) {
+  console.log("patch setRoundEnded");
+  const { body } = req;
+  const { tournamentId, roundNumber } = body;
+  try {
+    const patch = await db.query(
+      `update results set roundEnded = 1 where tournamentId = (${tournamentId}) and roundNumber = (${roundNumber});`
+    );
+    res.status(200).json({ patch });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
 // define the put tournament
 router.put("/tournament", async function (req, res) {
-  console.log("Update tournament");
+  console.log("put tournament");
   const { body } = req;
   const error = validateTournamentUpdate(body);
   if (!error) {
     console.log(body);
-    const { tournamentId, title, ownerId, arbiterId, moderatorId, pairing, tiebreaker, started, finished } = body;
+    const {
+      tournamentId,
+      title,
+      ownerId,
+      arbiterId,
+      moderatorId,
+      pairing,
+      tiebreaker,
+      started,
+      finished,
+    } = body;
     try {
       const update = await db.query(
         `update tournaments set title = "${title}", ownerId = ${ownerId}, arbiterId = ${arbiterId}, moderatorId = ${moderatorId}, pairing = ${pairing}, tiebreaker = ${tiebreaker}, started = ${started}, finished = ${finished} where tournamentId = ${tournamentId};`
@@ -122,7 +210,6 @@ router.put("/tournament", async function (req, res) {
   } else {
     res.status(400).send(error);
   }
-
-})
+});
 
 module.exports = router;
