@@ -74,7 +74,7 @@ router.put("/participant", async function (req, res) {
   const { tournamentId, participantId, wins, ties, loses, white, black } = body;
   try {
     const update = await db.query(
-      `update participants set wins = (${wins}), ties = (${ties}), loses = (${loses}), white = (${white}), black = (${black}) where tournamentId = (${tournamentId}) and participantId = (${participantId});`
+      `update participants set wins = (${wins}), ties = (${ties}), loses = (${loses}) where tournamentId = (${tournamentId}) and participantId = (${participantId});`
     );
     res.status(200).json({ update });
   } catch (error) {

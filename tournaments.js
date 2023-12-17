@@ -79,7 +79,7 @@ router.get("/checkRoundEnd/:id1/:id2", async function (req, res) {
   console.log("/checkRoundEnd/" + id1 + "/" + id2);
   try {
     const num = await db.query(
-      `select count (*) as num from chessdb.results where tournamentId = "${id1}" and roundNumber = "${id2}" and result = '';`
+      `select count(*) as num from chessdb.results where tournamentId = "${id1}" and roundNumber = "${id2}" and result = '';`
     );
     console.log('num: ' + num[0].num);
     res.status(200).json(num[0].num);
