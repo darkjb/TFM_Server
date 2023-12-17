@@ -67,6 +67,21 @@ router.post("/participant", async function (req, res) {
     res.status(400).send(error);
   }
 });
+// define the put participant
+router.put("/participant", async function (req, res) {
+  console.log("put participant");
+  const { body } = req;
+  const { tournamentId, participantId, wins, ties, loses, white, black } = body;
+  try {
+    const update = await db.query(
+      `update participants set wins = (${wins}), ties = (${ties}), loses = (${loses}), white = (${white}), black = (${black}) where tournamentId = (${tournamentId}) and participantId = (${participantId});`
+    );
+    res.status(200).json({ update });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
 // define the post result
 router.post("/result", async function (req, res) {
   console.log("post result");

@@ -33,7 +33,7 @@ router.get("/name/:id", async function (req, res) {
 });
 // define de post route
 router.post("/", async function (req, res) {
-  console.log("post" + id);
+  console.log("post");
   const { body } = req;
   const error = validateUser(body);
   if (!error) {
@@ -54,7 +54,7 @@ router.post("/", async function (req, res) {
 });
 // define de post auth
 router.post("/auth", async function (req, res) {
-  console.log("auth" + id);
+  console.log("auth");
   const { body } = req;
   const { email, password } = body;
   try {
