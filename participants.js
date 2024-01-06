@@ -47,7 +47,8 @@ router.get("/numberOf/:id", async function (req, res) {
     const consulta = await db.query(
       `select count(*) as consulta from participants where tournamentId = "${id}";`
     );
-    res.status(200).json(consulta[0].cont);
+    console.log(consulta[0])
+    res.status(200).json(consulta[0].consulta);
   } catch (error) {
     console.log(error);
     res.status(400).send(error.sqlMessage);

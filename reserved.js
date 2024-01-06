@@ -195,6 +195,22 @@ router.patch("/setRoundEnded", async function (req, res) {
     res.status(400).send(error.sqlMessage);
   }
 });
+// define the patch setTournamentFinished
+router.patch("/setTournamentFinished", async function (req, res) {
+  console.log("patch setTournamentFinished");
+  const { body } = req;
+  const { tournamentId } = body;
+  try {
+    const patch = await db.query(
+      `update tournaments set finished = 1 where tournamentId = (${tournamentId});`
+    );
+    res.status(200).json({ patch });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
+
 // define the put tournament
 router.put("/tournament", async function (req, res) {
   console.log("put tournament");

@@ -34,6 +34,20 @@ router.get("/results/:id", async function (req, res) {
   console.log("/results/" + id);
   try {
     const results = await db.query(
+      `select * from results where tournamentId = "${id}";`
+    );
+    res.status(200).json(results);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.sqlMessage);
+  }
+});
+//define the get/resultsList/:id route
+router.get("/resultsList/:id", async function (req, res) {
+  const id = req.params.id;
+  console.log("/resultsList/" + id);
+  try {
+    const results = await db.query(
       `select tournamentId, roundNumber, 0 as boardNumber, roundEnded, '' as player1, '' as player2, '0' as result from results where tournamentId = "${id}" group by tournamentId, roundNumber, roundEnded order by roundNumber;`
     );
     res.status(200).json(results);
@@ -81,7 +95,7 @@ router.get("/checkRoundEnd/:id1/:id2", async function (req, res) {
     const num = await db.query(
       `select count(*) as num from chessdb.results where tournamentId = "${id1}" and roundNumber = "${id2}" and result = '';`
     );
-    console.log('num: ' + num[0].num);
+    console.log("num: " + num[0].num);
     res.status(200).json(num[0].num);
   } catch (error) {
     console.log(error);
