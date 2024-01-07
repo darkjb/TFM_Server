@@ -119,7 +119,7 @@ router.post("/comment", async function (req, res) {
     const { tournamentId, userId, text, likes, dislikes } = body;
     try {
       const insert = await db.query(
-        `insert into comments (tournamentId, userId, text, likes, dislikes, publicationDate) values (${tournamentId}, ${userId}, "${text}", ${likes}, ${dislikes}, CURRENT_TIMESTAMP);`
+        `insert into comments (tournamentId, userId, text, likes, dislikes, publicationDate) values (${tournamentId}, ${userId}, "${text}", ${likes}, ${dislikes}, DATE_FORMAT(NOW(), '%d/%m/%Y'));`
       );
       res.status(200).json({ insert });
     } catch (error) {
