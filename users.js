@@ -59,7 +59,7 @@ router.post("/auth", async function (req, res) {
   const { email, password } = body;
   try {
     const respuesta = await db.query(
-      `select userId, password from users where mail = "${email}";`
+      `select userId, password from users where mail = ("${email}");`
     );
     const ok = await comparePassword(password, respuesta[0].password);
     jwt.sign("" + respuesta[0].userId, "secret_key", (err, token) => {

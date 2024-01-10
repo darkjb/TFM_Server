@@ -20,7 +20,7 @@ router.get("/byTournamentId/:id", async function (req, res) {
   console.log("/byTournamentId/" + id);
   try {
     const comments = await db.query(
-      `select * from comments where tournamentId = "${id}";`
+      `select * from comments where tournamentId = ("${id}");`
     );
     res.status(200).json(comments);
   } catch (error) {
@@ -34,7 +34,7 @@ router.get("/byCommentId/:id", async function (req, res) {
   console.log("/byCommentId/" + id);
   try {
     const comments = await db.query(
-      `select * from comments where commentId = "${id}";`
+      `select * from comments where commentId = ("${id}");`
     );
     res.status(200).json(comments);
   } catch (error) {

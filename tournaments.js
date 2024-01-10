@@ -20,7 +20,7 @@ router.get("/byTournamentId/:id", async function (req, res) {
   console.log("/byTournamentId/" + id);
   try {
     const tournament = await db.query(
-      `select * from tournaments where tournamentId = "${id}";`
+      `select * from tournaments where tournamentId = ("${id}");`
     );
     res.status(200).json(tournament);
   } catch (error) {
@@ -34,7 +34,7 @@ router.get("/results/:id", async function (req, res) {
   console.log("/results/" + id);
   try {
     const results = await db.query(
-      `select * from results where tournamentId = "${id}";`
+      `select * from results where tournamentId = ("${id}");`
     );
     res.status(200).json(results);
   } catch (error) {
@@ -48,7 +48,7 @@ router.get("/resultsList/:id", async function (req, res) {
   console.log("/resultsList/" + id);
   try {
     const results = await db.query(
-      `select tournamentId, roundNumber, 0 as boardNumber, roundEnded, '' as player1, '' as player2, '0' as result from results where tournamentId = "${id}" group by tournamentId, roundNumber, roundEnded order by roundNumber;`
+      `select tournamentId, roundNumber, 0 as boardNumber, roundEnded, '' as player1, '' as player2, '0' as result from results where tournamentId = ("${id}") group by tournamentId, roundNumber, roundEnded order by roundNumber;`
     );
     res.status(200).json(results);
   } catch (error) {
@@ -64,7 +64,7 @@ router.get("/result/:id1/:id2/:id3", async function (req, res) {
   console.log("/result/" + id1 + "/" + id2 + "/" + id3);
   try {
     const results = await db.query(
-      `select * from results where tournamentId = ${id1} and roundNumber = ${id2} and boardNumber = ${id3};`
+      `select * from results where tournamentId = (${id1}) and roundNumber = (${id2}) and boardNumber = (${id3});`
     );
     res.status(200).json(results);
   } catch (error) {
@@ -78,7 +78,7 @@ router.get("/lastResults/:id", async function (req, res) {
   console.log("/lastResults/" + id);
   try {
     const results = await db.query(
-      `select * from chessdb.results where roundNumber = (select max(roundNumber) from chessdb.results where tournamentId = "${id}") and tournamentId = "${id}" order by boardNumber;`
+      `select * from chessdb.results where roundNumber = (select max(roundNumber) from chessdb.results where tournamentId = ("${id}")) and tournamentId = ("${id}") order by boardNumber;`
     );
     res.status(200).json(results);
   } catch (error) {
@@ -93,7 +93,7 @@ router.get("/checkRoundEnd/:id1/:id2", async function (req, res) {
   console.log("/checkRoundEnd/" + id1 + "/" + id2);
   try {
     const num = await db.query(
-      `select count(*) as num from chessdb.results where tournamentId = "${id1}" and roundNumber = "${id2}" and result = '';`
+      `select count(*) as num from chessdb.results where tournamentId = ("${id1}") and roundNumber = ("${id2}") and result = '';`
     );
     console.log("num: " + num[0].num);
     res.status(200).json(num[0].num);
@@ -113,22 +113,22 @@ router.get("/games/:id1/:id2", async function (req, res) {
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 1 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0 as result2
         from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
                                  left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
-       where res.tournamentId = "${id1}" and res.roundNumber = "${id2}" and res.result = 'W'
+       where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'W'
        union
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 0 as result1, concat(par2.name, ' ' , par2.surname) as player2, 1 as result2
         from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
                                  left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
-       where res.tournamentId = "${id1}" and res.roundNumber = "${id2}" and res.result = 'B'
+       where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'B'
        union
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 0.5 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0.5 as result2
         from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
                                  left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
-       where res.tournamentId = "${id1}" and res.roundNumber = "${id2}" and res.result = 'X'
+       where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'X'
        union
       select res.boardNumber, concat(par1.name, ' ', par1.surname) as player1, 0 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0 as result2
         from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
                                  left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
-       where res.tournamentId = "${id1}" and res.roundNumber = "${id2}" and res.result = '';
+       where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = '';
       `
     );
     console.log(games);
@@ -144,7 +144,7 @@ router.get("/pairing/next/:id", async function (req, res) {
   console.log("/pairing/next/" + id);
   try {
     const pairing = await db.query(
-      `select * from chessdb.results where tournamentId = "${id}" and roundNumber in (select max(roundNumber) from chessdb.results where tournamentId = "${id}") order by boardNumber;`
+      `select * from chessdb.results where tournamentId = ("${id}") and roundNumber in (select max(roundNumber) from chessdb.results where tournamentId = ("${id}")) order by boardNumber;`
     );
     res.status(200).json(pairing);
   } catch (error) {

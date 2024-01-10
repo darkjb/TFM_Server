@@ -19,7 +19,9 @@ router.get("/byTournamentId/:id", async function (req, res) {
   const id = req.params.id;
   console.log("/byTournamentId/" + id);
   try {
-    const participants = await db.query(`select * from participants where tournamentId = "${id}";`)
+    const participants = await db.query(
+      `select * from participants where tournamentId = ("${id}");`
+    );
     res.status(200).json(participants);
   } catch (error) {
     console.log(error);
@@ -32,7 +34,9 @@ router.get("/byId/:id1/:id2", async function (req, res) {
   const id2 = req.params.id2;
   console.log("/byId/" + id1 + "/" + id2);
   try {
-    const participants = await db.query(`select * from participants where tournamentId = "${id1}" and participantId = "${id2}";`)
+    const participants = await db.query(
+      `select * from participants where tournamentId = ("${id1}") and participantId = ("${id2}");`
+    );
     res.status(200).json(participants);
   } catch (error) {
     console.log(error);
@@ -45,9 +49,9 @@ router.get("/numberOf/:id", async function (req, res) {
   console.log("/numberOf/" + id);
   try {
     const consulta = await db.query(
-      `select count(*) as consulta from participants where tournamentId = "${id}";`
+      `select count(*) as consulta from participants where tournamentId = ("${id}");`
     );
-    console.log(consulta[0])
+    console.log(consulta[0]);
     res.status(200).json(consulta[0].consulta);
   } catch (error) {
     console.log(error);

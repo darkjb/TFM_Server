@@ -1,6 +1,6 @@
 const express = require("express");
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 
@@ -11,22 +11,22 @@ app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
 
-const tournaments = require('./tournaments');
+const tournaments = require("./tournaments");
 
-app.use('/tournaments', tournaments);
+app.use("/tournaments", tournaments);
 
-const participants = require('./participants');
+const participants = require("./participants");
 
-app.use('/participants', participants);
+app.use("/participants", participants);
 
-const users = require('./users');
+const users = require("./users");
 
-app.use('/users', users);
+app.use("/users", users);
 
-const comments = require('./comments');
+const comments = require("./comments");
 
-app.use('/comments', comments);
+app.use("/comments", comments);
 
-const reserved = require('./reserved');
+const reserved = require("./reserved");
 
-app.use('/reserved', reserved);
+app.use("/reserved", reserved);
