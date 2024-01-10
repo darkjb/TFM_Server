@@ -8,7 +8,7 @@ const tables = [
   {
     name: "comments",
     columns:
-      "commentId INT AUTO_INCREMENT PRIMARY KEY, tournamentId INT, userId INT, text VARCHAR(250), likes INT, dislikes INT, publicationDate CHAR(10)",
+      "commentId INT AUTO_INCREMENT, tournamentId INT, userId INT, text VARCHAR(250), likes INT, dislikes INT, publicationDate CHAR(10)",
     pKey: ", PRIMARY KEY (commentId, tournamentId)",
   },
   {
