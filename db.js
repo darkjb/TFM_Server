@@ -4,7 +4,7 @@ let connection = null;
 async function query(sql){
     if(!connection) {
         connection = await mysql.createConnection({
-           host: "localhost",
+           host: "mysql",
            user: "root",
            password: "p4S5w0R#",
            database: "Chessdb",

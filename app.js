@@ -13,20 +13,20 @@ app.listen(port, () => {
 
 const tournaments = require("./tournaments");
 
-app.use("/tournaments", tournaments);
+app.use("/api/tournaments", tournaments);
 
 const participants = require("./participants");
 
-app.use("/participants", participants);
+app.use("/api/participants", participants);
 
 const users = require("./users");
 
-app.use("/users", users);
+app.use("/api/users", users);
 
 const comments = require("./comments");
 
-app.use("/comments", comments);
+app.use("/api/comments", comments);
 
 const reserved = require("./reserved");
 
-app.use("/reserved", reserved);
+app.use("/api/reserved", reserved);

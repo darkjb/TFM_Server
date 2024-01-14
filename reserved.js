@@ -32,7 +32,7 @@ router.post("/tournament", async function (req, res) {
     const { title, ownerId, pairing, tiebreaker } = body;
     try {
       const { insertId: newId } = await db.query(
-        `insert into tournaments (title, ownerId, arbiterId, moderatorId, pairing, tiebreaker, started, finished) values ("${title}", ${ownerId}, 0, 0, ${pairing}, ${tiebreaker}, false, false);`
+        `insert into tournaments (title, ownerId, pairing, tiebreaker, started, finished) values ("${title}", ${ownerId}, ${pairing}, ${tiebreaker}, false, false);`
       );
       res.status(200).json({ newId });
     } catch (error) {
@@ -222,8 +222,6 @@ router.put("/tournament", async function (req, res) {
       tournamentId,
       title,
       ownerId,
-      arbiterId,
-      moderatorId,
       pairing,
       tiebreaker,
       started,
@@ -231,7 +229,7 @@ router.put("/tournament", async function (req, res) {
     } = body;
     try {
       const update = await db.query(
-        `update tournaments set title = "${title}", ownerId = ${ownerId}, arbiterId = ${arbiterId}, moderatorId = ${moderatorId}, pairing = ${pairing}, tiebreaker = ${tiebreaker}, started = ${started}, finished = ${finished} where tournamentId = (${tournamentId});`
+        `update tournaments set title = "${title}", ownerId = ${ownerId}, pairing = ${pairing}, tiebreaker = ${tiebreaker}, started = ${started}, finished = ${finished} where tournamentId = (${tournamentId});`
       );
       res.status(200).json({ update });
     } catch (error) {
