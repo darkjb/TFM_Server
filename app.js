@@ -7,10 +7,6 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
-
 const tournaments = require("./tournaments");
 
 app.use("/api/tournaments", tournaments);
