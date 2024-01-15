@@ -27,8 +27,8 @@ router.use(function verifyToken(req, res, next) {
 router.post("/tournament", async function (req, res) {
   console.log("post tournament");
   const { body } = req;
-  const error = validateTournament(body);
-  if (!error) {
+  const valError = validateTournament(body);
+  if (!valError) {
     const { title, ownerId, pairing, tiebreaker } = body;
     try {
       const { insertId: newId } = await db.query(
@@ -47,8 +47,8 @@ router.post("/tournament", async function (req, res) {
 router.post("/participant", async function (req, res) {
   console.log("post participant");
   const { body } = req;
-  const error = validateParticipant(body);
-  if (!error) {
+  const valError = validateParticipant(body);
+  if (!valError) {
     const { tournamentId, name, surname, elo } = body;
     try {
       const consulta = await db.query(
@@ -86,8 +86,8 @@ router.put("/participant", async function (req, res) {
 router.post("/result", async function (req, res) {
   console.log("post result");
   const { body } = req;
-  const error = validateResult(body);
-  if (!error) {
+  const valError = validateResult(body);
+  if (!valError) {
     const {
       tournamentId,
       roundNumber,
@@ -114,8 +114,8 @@ router.post("/result", async function (req, res) {
 router.post("/comment", async function (req, res) {
   console.log("post comment");
   const { body } = req;
-  const error = validateComment(body);
-  if (!error) {
+  const valError = validateComment(body);
+  if (!valError) {
     const { tournamentId, userId, text, likes, dislikes } = body;
     try {
       const insert = await db.query(
@@ -164,8 +164,8 @@ router.delete("/comment/:id", async function (req, res) {
 router.put("/result", async function (req, res) {
   console.log("put result");
   const { body } = req;
-  const error = validateResult(body);
-  if (!error) {
+  const valError = validateResult(body);
+  if (!valError) {
     const { tournamentId, roundNumber, boardNumber, result } = body;
     try {
       const update = await db.query(
@@ -215,8 +215,8 @@ router.patch("/setTournamentFinished", async function (req, res) {
 router.put("/tournament", async function (req, res) {
   console.log("put tournament");
   const { body } = req;
-  const error = validateTournamentUpdate(body);
-  if (!error) {
+  const valError = validateTournamentUpdate(body);
+  if (!valError) {
     console.log(body);
     const {
       tournamentId,

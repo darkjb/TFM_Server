@@ -35,11 +35,11 @@ router.get("/name/:id", async function (req, res) {
 router.post("/", async function (req, res) {
   console.log("post");
   const { body } = req;
-  const error = validateUser(body);
-  if (!error) {
+  const valError = validateUser(body);
+  if (!valError) {
     const { name, surname, mail, password } = body;
-    const hash = await hashPassword(password);
     try {
+      const hash = await hashPassword(password);
       const { insertId: newId } = await db.query(
         `insert into users (name, surname, mail, password) values ("${name}", "${surname}", "${mail}", "${hash}");`
       );
@@ -92,6 +92,7 @@ const hashPassword = async (password) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   } catch (error) {
+    console.log(error)
     throw error;
   }
 };

@@ -78,7 +78,7 @@ router.get("/lastResults/:id", async function (req, res) {
   console.log("/lastResults/" + id);
   try {
     const results = await db.query(
-      `select * from chessdb.results where roundNumber = (select max(roundNumber) from chessdb.results where tournamentId = ("${id}")) and tournamentId = ("${id}") order by boardNumber;`
+      `select * from results where roundNumber = (select max(roundNumber) from results where tournamentId = ("${id}")) and tournamentId = ("${id}") order by boardNumber;`
     );
     res.status(200).json(results);
   } catch (error) {
@@ -93,7 +93,7 @@ router.get("/checkRoundEnd/:id1/:id2", async function (req, res) {
   console.log("/checkRoundEnd/" + id1 + "/" + id2);
   try {
     const num = await db.query(
-      `select count(*) as num from chessdb.results where tournamentId = ("${id1}") and roundNumber = ("${id2}") and result = '';`
+      `select count(*) as num from results where tournamentId = ("${id1}") and roundNumber = ("${id2}") and result = '';`
     );
     console.log("num: " + num[0].num);
     res.status(200).json(num[0].num);
@@ -111,23 +111,23 @@ router.get("/games/:id1/:id2", async function (req, res) {
     const games = await db.query(
       `
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 1 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0 as result2
-        from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
-                                 left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
+        from results res left join participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
+                         left join participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
        where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'W'
        union
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 0 as result1, concat(par2.name, ' ' , par2.surname) as player2, 1 as result2
-        from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
-                                 left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
+        from results res left join participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
+                         left join participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
        where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'B'
        union
       select res.boardNumber, concat(par1.name, ' ' , par1.surname) as player1, 0.5 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0.5 as result2
-        from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
-                                 left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
+        from results res left join participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
+                         left join participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
        where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = 'X'
        union
       select res.boardNumber, concat(par1.name, ' ', par1.surname) as player1, 0 as result1, concat(par2.name, ' ' , par2.surname) as player2, 0 as result2
-        from chessdb.results res left join chessdb.participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
-                                 left join chessdb.participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
+        from results res left join participants par1 on res.player1 = par1.participantId and res.tournamentId = par1.tournamentId
+                         left join participants par2 on res.player2 = par2.participantId and res.tournamentId = par2.tournamentId
        where res.tournamentId = ("${id1}") and res.roundNumber = ("${id2}") and res.result = '';
       `
     );
@@ -144,7 +144,7 @@ router.get("/pairing/next/:id", async function (req, res) {
   console.log("/pairing/next/" + id);
   try {
     const pairing = await db.query(
-      `select * from chessdb.results where tournamentId = ("${id}") and roundNumber in (select max(roundNumber) from chessdb.results where tournamentId = ("${id}")) order by boardNumber;`
+      `select * from results where tournamentId = ("${id}") and roundNumber in (select max(roundNumber) from results where tournamentId = ("${id}")) order by boardNumber;`
     );
     res.status(200).json(pairing);
   } catch (error) {
